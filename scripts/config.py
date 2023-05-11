@@ -1,7 +1,7 @@
 from brownie import accounts, network, config, MockV3Aggregator, Contract, VRFCoordinatorMock, LinkToken
 
 FORKED_LOCAL_ENVIRONMENTS = ["mainnet-fork"]
-LOCAL_BLOCKCHAINS_ENVIRONMENTS = ["development"]
+LOCAL_BLOCKCHAIN_ENVIRONMENTS = ["development"]
 
 
 def network_args():
@@ -15,7 +15,7 @@ def get_account(account_idx=None, id=None):
         account = accounts.load(id)
     elif (
         network.show_active() in FORKED_LOCAL_ENVIRONMENTS
-        or network.show_active() in LOCAL_BLOCKCHAINS_ENVIRONMENTS
+        or network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS
     ):
         account = accounts[0]
     else:
@@ -48,7 +48,7 @@ def deploy_mocks():
 
 def get_contract(contract_name):
     contract_type = contract_to_mock[contract_name]
-    if network.show_active() in LOCAL_BLOCKCHAINS_ENVIRONMENTS:
+    if network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         if len(contract_type) == 0:
             deploy_mocks()
         contract = contract_type[-1]
