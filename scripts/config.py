@@ -58,3 +58,13 @@ def get_contract(contract_name):
             contract_type._name, contract_address, contract_type.abi
         )
     return contract
+
+def fund_with_link(
+    contract_address, account=None, link_token=None, amount=100000000000000000
+):  # 0.1 LINK
+    account = account if account else get_account()
+    link_token = link_token if link_token else get_contract("link_token")
+    tx = link_token.transfer(contract_address, amount, {"from": account})
+    tx.wait(1)
+    print("Link Contract Funded!")
+    return tx
