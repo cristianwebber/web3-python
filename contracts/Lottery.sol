@@ -64,7 +64,7 @@ contract Lottery is VRFConsumerBase, Ownable {
         bytes32 _requestId,
         uint256 _randomness
     ) internal override {
-        require(lottery_state == LOTTERY_STATE.OPEN, "Lottery_Closed");
+        require(lottery_state == LOTTERY_STATE.PROCESSING, "Lottery_Closed");
         require(_randomness > 0, "Random_Not_Found");
         uint256 indexOfWinner = _randomness % players.length;
         recentWinner = players[indexOfWinner];
