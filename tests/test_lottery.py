@@ -1,14 +1,11 @@
 from brownie import Lottery, accounts, config, network
 from web3 import Web3
-
-
+from scripts.config import network_args
+from scripts.deploy_lottery import deploy_lottery
 
 
 def test_entrance_fee():
-    account1 = accounts[0]
-    lottery = Lottery.deploy(
-        network_args()["eth_usd_price_feed"],
-        {"from": account1}
-    )
-    assert lottery.getEntranceFee() > Web3.toWei(0.004, "ether")
-    assert lottery.getEntranceFee() < Web3.toWei(0.005, "ether")
+    lottery = deploy_lottery()
+    excepted_entrance_fee = Web3.toWei(0.001, "ether") # 2 dollars
+    entrance_fee = lottery.getEntranceFee()
+    assert excepted_entrance_fee == entrance_fee
