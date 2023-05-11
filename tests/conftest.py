@@ -1,5 +1,6 @@
-from scripts.deploy_lottery import deploy_lottery
 import pytest
+
+from scripts.deploy_lottery import deploy_lottery
 
 
 @pytest.fixture()
