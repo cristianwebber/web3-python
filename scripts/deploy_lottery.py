@@ -10,7 +10,6 @@ from scripts.config import network_args
 
 def deploy_lottery():
     account = get_account()
-    # network_args = network_args()
     lottery = Lottery.deploy(
         get_contract('eth_usd_price_feed').address,
         get_contract('vrf_coordinator').address,

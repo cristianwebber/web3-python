@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity ^0.6.6;
 
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
+import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
 
 contract Lottery is VRFConsumerBase, Ownable {
     address payable[] public players;
@@ -18,7 +18,7 @@ contract Lottery is VRFConsumerBase, Ownable {
     }
     LOTTERY_STATE public lottery_state;
     uint256 public fee;
-    bytes32 public keyHash;
+    bytes32 public keyhash;
     event RequestedRandomness(bytes32 requestId);
 
     constructor(
@@ -26,13 +26,13 @@ contract Lottery is VRFConsumerBase, Ownable {
         address _vrfCoordinator,
         address _link,
         uint256 _fee,
-        bytes32 _keyHash
+        bytes32 _keyhash
     ) public VRFConsumerBase(_vrfCoordinator, _link) {
         usdEntryFee = 2 * (10 ** 18); // 2 dollars
         ethUsdPriceFeed = AggregatorV3Interface(_priceFeedAddress);
         lottery_state = LOTTERY_STATE.CLOSED;
         fee = _fee;
-        keyHash = _keyHash;
+        keyhash = _keyhash;
     }
 
     function enter() public payable {
@@ -55,8 +55,12 @@ contract Lottery is VRFConsumerBase, Ownable {
 
     function endLottery() public onlyOwner {
         require(lottery_state == LOTTERY_STATE.OPEN, "Lottery_Closed");
+        require(
+            LINK.balanceOf(address(this)) >= fee,
+            "Not_Enough_LINK"
+        );
         lottery_state = LOTTERY_STATE.PROCESSING;
-        bytes32 requestId = requestRandomness(keyHash, fee);
+        bytes32 requestId = requestRandomness(keyhash, fee);
         emit RequestedRandomness(requestId);
     }
 
@@ -70,7 +74,7 @@ contract Lottery is VRFConsumerBase, Ownable {
         recentWinner = players[indexOfWinner];
         recentWinner.transfer(address(this).balance);
         players = new address payable[](0);
-        lottery_state = LOTTERY_STATE.OPEN;
+        lottery_state = LOTTERY_STATE.CLOSED;
         randomness = _randomness;
     }
 }
