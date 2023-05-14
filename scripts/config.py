@@ -1,13 +1,13 @@
 from brownie import accounts
 from brownie import config
 from brownie import Contract
-from brownie import LinkToken
-from brownie import MockV3Aggregator
+from brownie import VRFCoordinatorV2Mock
 from brownie import network
-from brownie import VRFCoordinatorMock
 
-FORKED_LOCAL_ENVIRONMENTS = ['mainnet-fork']
 LOCAL_BLOCKCHAIN_ENVIRONMENTS = ['development']
+
+BASE_FEE = "250000000000000000" # 0.25 is this the premium in LINK?
+GAS_PRICE_LINK = 1e9 # link per gas, is this the gas lane? // 0.000000001 LINK per gas
 
 
 def network_args():
@@ -19,10 +19,7 @@ def get_account(account_idx=None, id=None):
         account = accounts[account_idx]
     elif id:
         account = accounts.load(id)
-    elif (
-        network.show_active() in FORKED_LOCAL_ENVIRONMENTS
-        or network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS
-    ):
+    elif network.show_active() in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         account = accounts[0]
     else:
         account = accounts.add(config['wallets']['from_key'])
@@ -31,24 +28,19 @@ def get_account(account_idx=None, id=None):
 
 
 contract_to_mock = {
-    'eth_usd_price_feed': MockV3Aggregator,
-    'vrf_coordinator': VRFCoordinatorMock,
-    'link_token': LinkToken,
+    'vrf_coordinator_v2': VRFCoordinatorV2Mock
 }
 
 
 def deploy_mocks():
     account = get_account()
-    MockV3Aggregator.deploy(
-        8,  # decimals
-        200000000000,  # initial_value
+
+    VRFCoordinatorV2Mock.deploy(
+        BASE_FEE,
+        GAS_PRICE_LINK,
         {'from': account},
     )
-    print('MockV3Aggregator deployed!')
-    link_token = LinkToken.deploy({'from': account})
-    print('LinkToken deployed!')
-    VRFCoordinatorMock.deploy(link_token.address, {'from': account})
-    print('VRFCoordinatorMock deployed!')
+    print('VRFCoordinatorV2Mock deployed!')
     print('Mocks deployed!')
 
 

@@ -1,31 +1,29 @@
 dotenv: .env
 
 dependencies:
-  - smartcontractkit/chainlink-brownie-contracts@1.1.1
-  - OpenZeppelin/openzeppelin-contracts@3.4.0
+  - smartcontractkit/chainlink-brownie-contracts@0.6.1
 compiler:
   solc:
     remappings:
-      - "@chainlink=smartcontractkit/chainlink-brownie-contracts@1.1.1"
-      - "@openzeppelin=OpenZeppelin/openzeppelin-contracts@3.4.0"
-
+      - "@chainlink=smartcontractkit/chainlink-brownie-contracts@0.6.1"
 networks:
   default: development
 
   development:
-    keyhash: "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c"
-    fee: 5000000000000000
+    gas_lane: "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c" # 30 gwei
+    update_interval: 30
+    raffle_entrance_fee: 0.01 # 0.01 ETH
+    callback_gas_limit: "2500000" # 2,500,000 gas
+    verify: False
 
   sepolia:
-    vrf_coordinator: "0x8103b0a8a00be2ddc778e6e7eaa21791cd364625"
-    eth_usd_price_feed: "0x694aa1769357215de4fac081bf1f309adc325306"
-    link_token: "0x779877a7b0d9e8603169ddbd7836e478b4624789"
-    keyhash: "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c"
-    fee: 5000000000000000
+    subscription_id: 1951
+    update_interval: 30
+    gas_lane: "0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c" # 30 gwei
+    raffle_entrance_fee: 0.01 # 0.01 ETH
+    callback_gas_limit: "2500000" # 2,500,000 gas
+    vrf_coordinator_v2: "0x8103b0a8a00be2ddc778e6e7eaa21791cd364625"
     verify: True
 
-  mainnet-fork:
-    eth_usd_price_feed: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419"
-    verify: False
 wallets:
   from_key: ${PRIVATE_KEY}
