@@ -1,13 +1,13 @@
 from brownie import accounts
 from brownie import config
 from brownie import Contract
-from brownie import VRFCoordinatorV2Mock
 from brownie import network
+from brownie import VRFCoordinatorV2Mock
 
 LOCAL_BLOCKCHAIN_ENVIRONMENTS = ['development']
 
-BASE_FEE = "250000000000000000" # 0.25 is this the premium in LINK?
-GAS_PRICE_LINK = 1e9 # link per gas, is this the gas lane? // 0.000000001 LINK per gas
+BASE_FEE = '250000000000000000'  # 0.25 is this the premium in LINK?
+GAS_PRICE_LINK = 1e9  # 0.000000001 LINK per gas
 
 
 def network_args():
@@ -28,7 +28,7 @@ def get_account(account_idx=None, id=None):
 
 
 contract_to_mock = {
-    'vrf_coordinator_v2': VRFCoordinatorV2Mock
+    'vrf_coordinator_v2': VRFCoordinatorV2Mock,
 }
 
 
