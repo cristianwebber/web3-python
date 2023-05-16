@@ -28,7 +28,6 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
     uint32 private constant NUM_WORDS = 1;
 
     // Lottery Variables
-    uint256 private immutable i_interval;
     uint256 private immutable i_entranceFee;
     uint256 private s_lastTimeStamp;
     address private s_recentWinner;
@@ -45,13 +44,11 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         address vrfCoordinatorV2,
         uint64 subscriptionId,
         bytes32 gasLane, // keyHash
-        uint256 interval,
         uint256 entranceFee,
         uint32 callbackGasLimit
     ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane;
-        i_interval = interval;
         i_subscriptionId = subscriptionId;
         i_entranceFee = entranceFee;
         s_lotteryState = lotteryState.OPEN;
@@ -74,10 +71,9 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
      * @dev This is the function that the Chainlink Keeper nodes call
      * they look for `upkeepNeeded` to return True.
      * the following should be true for this to return true:
-     * 1. The time interval has passed between Lottery runs.
-     * 2. The lottery is open.
-     * 3. The contract has ETH.
-     * 4. Implicity, your subscription is funded with LINK.
+     * 1. The lottery is open.
+     * 2. The contract has ETH.
+     * 3. Implicity, your subscription is funded with LINK.
      */
     function checkUpkeep(
         bytes memory /* checkData */
@@ -91,10 +87,9 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
         )
     {
         bool isOpen = lotteryState.OPEN == s_lotteryState;
-        bool timePassed = ((block.timestamp - s_lastTimeStamp) > i_interval);
-        bool hasPlayers = s_players.length > 0;
+        bool hasPlayers = s_players.length >= 5;
         bool hasBalance = address(this).balance > 0;
-        upkeepNeeded = (timePassed && isOpen && hasBalance && hasPlayers);
+        upkeepNeeded = (isOpen && hasBalance && hasPlayers);
         return (upkeepNeeded, "0x0");
     }
 
@@ -168,10 +163,6 @@ contract Lottery is VRFConsumerBaseV2, AutomationCompatibleInterface {
 
     function getLastTimeStamp() public view returns (uint256) {
         return s_lastTimeStamp;
-    }
-
-    function getInterval() public view returns (uint256) {
-        return i_interval;
     }
 
     function getEntranceFee() public view returns (uint256) {

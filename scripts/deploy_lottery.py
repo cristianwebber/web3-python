@@ -27,7 +27,6 @@ def deploy_lottery():
         vrf_coordinator_v2.address,
         subscription_id,
         network_args()['gas_lane'],
-        network_args()['update_interval'],
         Web3.toWei(network_args()['raffle_entrance_fee'], 'ether'),
         network_args()['callback_gas_limit'],
         {'from': account},
@@ -49,13 +48,13 @@ def enter_lottery():
 
 def end_lottery():
     lottery = Lottery[-1]
-    time.sleep(60)
+    time.sleep(20)
     print(f'{lottery.getRecentWinner()} is the new winner!')
 
 
 def main():
     deploy_lottery()
-    for i in range(2):
+    for i in range(5):
         enter_lottery()
     end_lottery()
 
