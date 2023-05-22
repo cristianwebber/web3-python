@@ -26,3 +26,9 @@ deploy_lottery:
 
 deploy_lottery_testnet:
 	brownie run scripts/deploy_lottery.py --network sepolia
+
+token:
+	brownie run scripts/deploy_token.py
+
+token_testnet:
+	brownie run scripts/deploy_token.py --network sepolia
